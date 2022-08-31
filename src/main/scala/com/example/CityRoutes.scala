@@ -5,6 +5,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import com.example.Registry._
+import WeatherAPI.WeatherRequest.getTemp
 
 import scala.concurrent.Future
 import akka.actor.typed.ActorRef

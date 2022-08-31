@@ -4,12 +4,16 @@ package com.example
 import akka.actor.typed.ActorRef
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
+
 import scala.collection.immutable
+import WeatherAPI.WeatherRequest.getTemp
+
+import scala.concurrent.Future
 
 //#user-case-classes
 final case class City(name: String)
 final case class Cities(users: immutable.Seq[City])
-final case class Weather(city: String, temperature: Float)
+final case class Weather(city: String, temperature: Future[Float])
 //#user-case-classes
 
 object Registry {

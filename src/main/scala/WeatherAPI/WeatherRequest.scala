@@ -1,22 +1,24 @@
-package com.example
+package WeatherAPI
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.HttpHeader
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{HttpEntity, HttpMethods, HttpRequest, HttpResponse}
-import akka.stream.Materializer
+import com.example.Weather
 import upickle.default
 
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.{Duration, DurationInt}
-import scala.util.{Failure, Success}
+import scala.concurrent.{CanAwait, Future}
+import scala.concurrent.duration.DurationInt
 
 object WeatherRequest {
 
   implicit val system: ActorSystem = ActorSystem()
   //implicit val materializer: Materializer = Materializer
+
   import system.dispatcher
+
+  case class ErrorStatus(code: String, description: String)
+  case class ResponseStatus(success: Boolean, error: ErrorStatus)
   case class Temperature(tempC: Float)
 
   def sendRequest(request: HttpRequest): Future[String] = {
@@ -25,14 +27,20 @@ object WeatherRequest {
     entityFuture.map(entity => entity.data.utf8String)
   }
 
-  def parseResponse(response: String): Float = {
+  def parseResponse(response: String): String = {
     implicit val tempRW: default.ReadWriter[Temperature] = upickle.default.macroRW[Temperature]
+    implicit val errorRW: default.ReadWriter[ErrorStatus]  = upickle.default.macroRW[ErrorStatus]
+    implicit val responseStatusRW: default.ReadWriter[ResponseStatus]  = upickle.default.macroRW[ResponseStatus]
     val jsonResponse = ujson.read(response)
-    val temperature = upickle.default.read[Temperature](jsonResponse("response")("ob"))
-    temperature.tempC
+    val ifSuccess = upickle.default.read[ResponseStatus](jsonResponse)
+    if (ifSuccess.success) {
+      val temperature = upickle.default.read[Temperature](jsonResponse("response")("ob"))
+      temperature.tempC.toString
+    }  else ifSuccess.error.description
+
   }
 
-  def getTemp(cityCountry: String = "London,gb"): Future[Float] = {
+  def getTemp(cityCountry: String = "London,gb"): Future[String] = {
     val request: HttpRequest = HttpRequest(
       method = HttpMethods.GET,
       uri = "https://aerisweather1.p.rapidapi.com/observations/" + cityCountry
@@ -44,14 +52,15 @@ object WeatherRequest {
 
     val response = sendRequest(request)
     response.foreach(println)
-    response.map(parseResponse)
+    val temp = response.map(parseResponse)
+    temp
   }
-
+  /*
   def main(args: Array[String]): Unit = {
     val temp = getTemp("Moscow,rus")
     temp.onComplete {
       case Success(value) => println(value)
     }
-  }
+  }*/
 
 }
