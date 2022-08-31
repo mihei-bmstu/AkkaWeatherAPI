@@ -4,16 +4,14 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{HttpEntity, HttpMethods, HttpRequest, HttpResponse}
-import com.example.Weather
 import upickle.default
 
-import scala.concurrent.{CanAwait, Future}
+import scala.concurrent.{Future}
 import scala.concurrent.duration.DurationInt
 
 object WeatherRequest {
 
   implicit val system: ActorSystem = ActorSystem()
-  //implicit val materializer: Materializer = Materializer
 
   import system.dispatcher
 
@@ -37,7 +35,6 @@ object WeatherRequest {
       val temperature = upickle.default.read[Temperature](jsonResponse("response")("ob"))
       temperature.tempC.toString
     }  else ifSuccess.error.description
-
   }
 
   def getTemp(cityCountry: String = "London,gb"): Future[String] = {
@@ -55,12 +52,5 @@ object WeatherRequest {
     val temp = response.map(parseResponse)
     temp
   }
-  /*
-  def main(args: Array[String]): Unit = {
-    val temp = getTemp("Moscow,rus")
-    temp.onComplete {
-      case Success(value) => println(value)
-    }
-  }*/
 
 }
