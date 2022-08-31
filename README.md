@@ -1,3 +1,3 @@
 # AkkaWeatherAPI
 
-Working code is in WeatherAPI packege
+Working code is in WeatherAPI package
