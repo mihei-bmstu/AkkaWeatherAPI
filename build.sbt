@@ -16,12 +16,11 @@ lazy val root = (project in file("."))
       "com.typesafe.akka" %% "akka-stream" % akkaVersion,
       "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
       "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
-      "org.scalikejdbc" %% "scalikejdbc" % "3.5.0",
-      "org.postgresql" % "postgresql" % "42.5.0",
       "org.slf4j" % "slf4j-api" % "2.0.0",
       "org.slf4j" % "slf4j-simple" % "2.0.0",
       "com.lihaoyi" %% "upickle" % "2.0.0"
     ),
-    dockerBaseImage := "openjdk:jre-alpine",
-    dockerExposedPorts := Seq(8081, 8081)
+    dockerBaseImage := "openjdk",
+    dockerExposedPorts := Seq(8081),
+    Docker / packageName := "akkaweatherapi"
   )
