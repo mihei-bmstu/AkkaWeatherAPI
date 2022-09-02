@@ -18,7 +18,9 @@ lazy val root = (project in file("."))
       "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
       "org.slf4j" % "slf4j-api" % "2.0.0",
       "org.slf4j" % "slf4j-simple" % "2.0.0",
-      "com.lihaoyi" %% "upickle" % "2.0.0"
+      "com.lihaoyi" %% "upickle" % "2.0.0",
+      "org.scalactic" %% "scalactic" % "3.2.13",
+      "org.scalatest" %% "scalatest" % "3.2.13" % "test"
     ),
     dockerBaseImage := "openjdk",
     dockerExposedPorts := Seq(8081),
