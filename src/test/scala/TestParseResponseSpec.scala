@@ -1,4 +1,3 @@
-import org.scalatest._
 import WeatherAPI.WeatherRequest._
 import ujson.{IncompleteParseException, ParseException}
 
