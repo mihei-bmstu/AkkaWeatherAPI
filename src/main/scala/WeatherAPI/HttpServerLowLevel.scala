@@ -16,11 +16,19 @@ object HttpServerLowLevel {
   def getHttpResponse(location: String): HttpResponse = {
     val forecast = getTemp(location)
     val temp = Await.result(forecast, 5.seconds)
-    HttpResponse(entity = HttpEntity(
-      ContentTypes.`text/html(UTF-8)`,
-      s"Current temperature in the location '$location' is $temp °C"
+    if (temp.length < 5) {
+      HttpResponse(entity = HttpEntity(
+        ContentTypes.`text/html(UTF-8)`,
+        s"Current temperature in the location '$location' is $temp °C"
       )
-    )
+      )
+    } else {
+      HttpResponse(entity = HttpEntity(
+        ContentTypes.`text/html(UTF-8)`,
+        "Please send me City and Country. For example: Moscow,rus"
+      )
+      )
+    }
   }
 
   def main(args: Array[String]): Unit = {
@@ -50,10 +58,10 @@ object HttpServerLowLevel {
 
     println(s"Server online at $host:$port ")
 
-    StdIn.readLine()
+    /*StdIn.readLine()
     bindingFuture
       .flatMap(_.unbind())
-      .onComplete(_ => system.terminate())
+      .onComplete(_ => system.terminate())*/
   }
 
 }
